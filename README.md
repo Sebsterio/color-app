@@ -1,3 +1,9 @@
+# Color app
+
+Tutorial project from [The Modern React Bootcamp](https://www.udemy.com/share/101WbGAkcacFhaTHo=/) by Colt Steele.
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
