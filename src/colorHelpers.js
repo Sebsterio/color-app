@@ -1,9 +1,6 @@
 import chroma from "chroma-js";
 
-const levels = Array.from({ length: 10 }, (x, i) => {
-	if (i === 0) return 50;
-	else return i * 100;
-});
+const levels = Array.from({ length: 10 }, (x, i) => i * 100);
 
 function generatePalette(starterPalette) {
 	//// ---- Tutorial solution: ----
@@ -14,7 +11,6 @@ function generatePalette(starterPalette) {
 	// 	colors: {}
 	// };
 	let newPalette = { ...starterPalette, colors: {} };
-	// newPalette.colors = {};
 
 	for (let level of levels) {
 		newPalette.colors[level] = [];
