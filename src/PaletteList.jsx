@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import MiniPalette from "./MiniPalette";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/styles";
 
 const styles = {
@@ -62,4 +61,3 @@ class PaletteList extends Component {
 }
 
 export default withStyles(styles)(PaletteList);
-/* <Link to={`/palette/${p.id}`}>{p.paletteName}</Link> */
