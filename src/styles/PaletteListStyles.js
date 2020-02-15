@@ -7,7 +7,9 @@ export default {
 		justifyContent: "center"
 	},
 	container: {
-		width: "50%",
+		width: "100%",
+		maxWidth: "800px",
+		padding: "0 1rem",
 		display: "flex",
 		alignItems: "flex-start",
 		flexDirection: "column",
