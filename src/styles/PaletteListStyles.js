@@ -2,8 +2,16 @@ import sizes from "./sizes";
 import bg from "./bg.svg";
 
 export default {
+	"@global": {
+		".fade-exit": {
+			opacity: 1,
+			transition: "opacity 500ms ease-out"
+		},
+		".fade-exit-active": {
+			opacity: 0
+		}
+	},
 	root: {
-		backgroundColor: "blue",
 		height: "100vh",
 		display: "flex",
 		alignItems: "flex-start",
@@ -50,7 +58,7 @@ export default {
 		},
 		[sizes.down("xs")]: {
 			gridTemplateColumns: "repeat(1, 100%)",
-			gridGap: "1rem"
+			gridGap: "1.4rem"
 		}
 	}
 };
