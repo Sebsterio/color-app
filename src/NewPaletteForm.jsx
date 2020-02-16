@@ -1,18 +1,19 @@
 import React, { Component } from "react";
-import classNames from "classnames";
-import { withStyles } from "@material-ui/core/styles";
-import PaletteFormNav from "./PaletteFormNav";
-import ColorPickerForm from "./ColorPickerForm";
-import Drawer from "@material-ui/core/Drawer";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import { withStyles } from "@material-ui/core/styles";
+import { arrayMove } from "react-sortable-hoc";
+import classNames from "classnames";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
 import Button from "@material-ui/core/Button";
 import DraggableColorList from "./DraggableColorList";
-import { arrayMove } from "react-sortable-hoc";
-import "emoji-mart/css/emoji-mart.css";
+import ColorPickerForm from "./ColorPickerForm";
+import PaletteFormNav from "./PaletteFormNav";
 import styles from "./styles/NewPaletteFormStyles";
+import seedColors from "./seedColors";
+import "emoji-mart/css/emoji-mart.css";
 
 class NewPaletteForm extends Component {
 	static defaultProps = {
@@ -23,7 +24,7 @@ class NewPaletteForm extends Component {
 		this.state = {
 			// open: true,
 			open: false,
-			colors: this.props.palettes[0].colors
+			colors: seedColors[0].colors
 		};
 		this.addNewColor = this.addNewColor.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -58,8 +59,15 @@ class NewPaletteForm extends Component {
 	addRandomColor() {
 		//pick random color from existing palettes
 		const allColors = this.props.palettes.map(p => p.colors).flat();
-		var rand = Math.floor(Math.random() * allColors.length);
-		const randomColor = allColors[rand];
+		let randomColor;
+		let isDuplicateColor = true;
+		while (isDuplicateColor) {
+			let rand = Math.floor(Math.random() * allColors.length);
+			randomColor = allColors[rand];
+			isDuplicateColor = this.state.colors.some(
+				color => color.name === randomColor.name
+			);
+		}
 		this.setState({ colors: [...this.state.colors, randomColor] });
 	}
 	handleSubmit(newPalette) {
