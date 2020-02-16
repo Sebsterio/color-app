@@ -11,6 +11,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Button from "@material-ui/core/Button";
 import DraggableColorList from "./DraggableColorList";
 import { arrayMove } from "react-sortable-hoc";
+import "emoji-mart/css/emoji-mart.css";
 
 const drawerWidth = 400;
 
@@ -78,7 +79,8 @@ class NewPaletteForm extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			open: true,
+			// open: true,
+			open: false,
 			colors: this.props.palettes[0].colors
 		};
 		this.addNewColor = this.addNewColor.bind(this);
