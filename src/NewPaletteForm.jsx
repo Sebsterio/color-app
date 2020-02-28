@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { withStyles } from "@material-ui/core/styles";
-import { arrayMove } from "react-sortable-hoc";
+import { arrayMove } from "array-move";
 import classNames from "classnames";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,151 +15,117 @@ import styles from "./styles/NewPaletteFormStyles";
 import seedColors from "./seedColors";
 import "emoji-mart/css/emoji-mart.css";
 
-class NewPaletteForm extends Component {
-	static defaultProps = {
-		maxColors: 20
-	};
-	constructor(props) {
-		super(props);
-		this.state = {
-			// open: true,
-			open: false,
-			colors: seedColors[0].colors
-		};
-		this.addNewColor = this.addNewColor.bind(this);
-		this.handleChange = this.handleChange.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.removeColor = this.removeColor.bind(this);
-		this.clearColors = this.clearColors.bind(this);
-		this.addRandomColor = this.addRandomColor.bind(this);
-	}
+const NewPaletteForm = props => {
+	const { classes, palettes, savePalette, history } = props;
+	const maxColors = 20;
+	const [open, setOpen] = useState(false);
+	const [colors, setColors] = useState(seedColors[0].colors);
+	const paletteIsFull = colors.length >= maxColors;
 
-	handleDrawerOpen = () => {
-		this.setState({ open: true });
+	const addNewColor = newColor => setColors([...colors, newColor]);
+
+	const removeColor = colorName => {
+		setColors(colors.filter(color => color.name !== colorName));
 	};
 
-	handleDrawerClose = () => {
-		this.setState({ open: false });
-	};
+	const clearColors = () => setColors([]);
 
-	addNewColor(newColor) {
-		this.setState({
-			colors: [...this.state.colors, newColor],
-			newColorName: ""
-		});
-	}
-	handleChange(evt) {
-		this.setState({
-			[evt.target.name]: evt.target.value
-		});
-	}
-	clearColors() {
-		this.setState({ colors: [] });
-	}
-	addRandomColor() {
-		//pick random color from existing palettes
-		const allColors = this.props.palettes.map(p => p.colors).flat();
+	// pick random color from existing palettes
+	const addRandomColor = () => {
+		const allColors = palettes.map(p => p.colors).flat();
 		let randomColor;
+		// avoid duplicates
 		let isDuplicateColor = true;
 		while (isDuplicateColor) {
 			let rand = Math.floor(Math.random() * allColors.length);
 			randomColor = allColors[rand];
-			isDuplicateColor = this.state.colors.some(
-				color => color.name === randomColor.name
-			);
+			isDuplicateColor = colors.some(color => color.name === randomColor.name);
 		}
-		this.setState({ colors: [...this.state.colors, randomColor] });
-	}
-	handleSubmit(newPalette) {
-		newPalette.id = newPalette.paletteName.toLowerCase().replace(/ /g, "-");
-		newPalette.colors = this.state.colors;
-		this.props.savePalette(newPalette);
-		this.props.history.push("/");
-	}
-	removeColor(colorName) {
-		this.setState({
-			colors: this.state.colors.filter(color => color.name !== colorName)
-		});
-	}
-	onSortEnd = ({ oldIndex, newIndex }) => {
-		this.setState(({ colors }) => ({
-			colors: arrayMove(colors, oldIndex, newIndex)
-		}));
+		setColors([...colors, randomColor]);
 	};
 
-	render() {
-		const { classes, maxColors, palettes } = this.props;
-		const { open, colors } = this.state;
-		const paletteIsFull = colors.length >= maxColors;
+	// Add newly created palette to App state and navigate to PaletteList (Home)
+	const handleSubmit = newPalette => {
+		newPalette.id = newPalette.paletteName.toLowerCase().replace(/ /g, "-");
+		newPalette.colors = colors;
+		savePalette(newPalette);
+		history.push("/");
+	};
 
-		return (
-			<div className={classes.root}>
-				<PaletteFormNav
-					open={open}
-					palettes={palettes}
-					handleSubmit={this.handleSubmit}
-					handleDrawerOpen={this.handleDrawerOpen}
-				/>
-				<Drawer
-					className={classes.drawer}
-					variant="persistent"
-					anchor="left"
-					open={open}
-					classes={{
-						paper: classes.drawerPaper
-					}}
-				>
-					<div className={classes.drawerHeader}>
-						<IconButton onClick={this.handleDrawerClose}>
-							<ChevronLeftIcon />
-						</IconButton>
+	// Sort colors in array to reflect their position on the grid after dragging
+	const onSortEnd = ({ oldIndex, newIndex }) => {
+		if (oldIndex === newIndex) return; // TODO: figure why crashes on colorDelete w/out this
+		setColors(arrayMove(colors, oldIndex, newIndex));
+	};
+
+	return (
+		<div className={classes.root}>
+			<PaletteFormNav
+				open={open}
+				palettes={palettes}
+				handleSubmit={handleSubmit}
+				handleDrawerOpen={() => setOpen(true)}
+			/>
+			<Drawer
+				className={classes.drawer}
+				variant="persistent"
+				anchor="left"
+				open={open}
+				classes={{
+					paper: classes.drawerPaper
+				}}
+			>
+				<div className={classes.drawerHeader}>
+					<IconButton onClick={() => setOpen(false)}>
+						<ChevronLeftIcon />
+					</IconButton>
+				</div>
+				<Divider />
+				<div className={classes.container}>
+					<Typography variant="h4" gutterBottom>
+						Design Your Palette
+					</Typography>
+					<div className={classes.buttons}>
+						<Button
+							variant="contained"
+							color="secondary"
+							onClick={clearColors}
+							className={classes.button}
+						>
+							Clear Palette
+						</Button>
+						<Button
+							variant="contained"
+							className={classes.button}
+							color="primary"
+							onClick={addRandomColor}
+							disabled={paletteIsFull}
+						>
+							Random Color
+						</Button>
 					</div>
-					<Divider />
-					<div className={classes.container}>
-						<Typography variant="h4" gutterBottom>
-							Design Your Palette
-						</Typography>
-						<div className={classes.buttons}>
-							<Button
-								variant="contained"
-								color="secondary"
-								onClick={this.clearColors}
-								className={classes.button}
-							>
-								Clear Palette
-							</Button>
-							<Button
-								variant="contained"
-								className={classes.button}
-								color="primary"
-								onClick={this.addRandomColor}
-								disabled={paletteIsFull}
-							>
-								Random Color
-							</Button>
-						</div>
-						<ColorPickerForm
-							paletteIsFull={paletteIsFull}
-							addNewColor={this.addNewColor}
-							colors={colors}
-						/>
-					</div>
-				</Drawer>
-				<main
-					className={classNames(classes.content, {
-						[classes.contentShift]: open
-					})}
-				>
-					<div className={classes.drawerHeader} />
-					<DraggableColorList
+					<ColorPickerForm
+						paletteIsFull={paletteIsFull}
+						addNewColor={addNewColor}
 						colors={colors}
-						removeColor={this.removeColor}
-						axis="xy"
-						onSortEnd={this.onSortEnd}
 					/>
-				</main>
-			</div>
-		);
-	}
-}
+				</div>
+			</Drawer>
+			<main
+				className={classNames(classes.content, {
+					[classes.contentShift]: open
+				})}
+			>
+				<div className={classes.drawerHeader} />
+				<DraggableColorList
+					colors={colors}
+					removeColor={removeColor}
+					axis="xy"
+					onSortEnd={onSortEnd}
+				/>
+			</main>
+		</div>
+	);
+};
+
 export default withStyles(styles, { withTheme: true })(NewPaletteForm);
