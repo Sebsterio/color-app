@@ -15,9 +15,13 @@ import styles from "./styles/PaletteListStyles";
 import blue from "@material-ui/core/colors/blue";
 import red from "@material-ui/core/colors/red";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { useContext } from "react";
+import { PalettesContext, DispatchContext } from "./context/palettes.context";
 
 const PaletteList = props => {
-	const { palettes, deletePalette, history, classes } = props;
+	const { history, classes } = props;
+	const palettes = useContext(PalettesContext);
+	const dispatch = useContext(DispatchContext);
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const [deletingId, setDeletingId] = useState("");
 
@@ -33,7 +37,7 @@ const PaletteList = props => {
 		history.push(`/palette/${id}`);
 	};
 	const handleDelete = () => {
-		deletePalette(deletingId);
+		dispatch({ type: "DELETE", id: deletingId });
 		closeDialog();
 	};
 

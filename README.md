@@ -4,7 +4,12 @@ Tutorial project from [The Modern React Bootcamp](https://www.udemy.com/share/10
 
 ### My modifications:
 
-- Refactored all class components into Hooks
+- Refactored all class components using Hooks
+
+### TODO
+
+- edit palette
+- custom color scales function in SingleColorPalette
 
 ---
 

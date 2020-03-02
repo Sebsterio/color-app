@@ -12,9 +12,12 @@ import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import styles from "./styles/PaletteFormNavStyles";
+import { useContext } from "react";
+import { PalettesContext } from "./context/palettes.context";
 
 const PaletteFormNav = props => {
-	const { classes, open, palettes, handleSubmit, handleDrawerOpen } = props;
+	const { classes, open, handleSubmit, handleDrawerOpen } = props;
+	const palettes = useContext(PalettesContext);
 	const [formShowing, toggleFormShowing] = useToggle(false);
 
 	return (

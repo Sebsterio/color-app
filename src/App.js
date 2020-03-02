@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Route, Switch } from "react-router-dom";
 import { generatePalette } from "./colorHelpers";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -7,28 +7,17 @@ import Palette from "./Palette";
 import PaletteList from "./PaletteList";
 import NewPaletteForm from "./NewPaletteForm";
 import SingleColorPalette from "./SingleColorPalette";
-import seedColors from "./seedColors";
+import { PalettesContext } from "./context/palettes.context";
 
 const App = () => {
-	const savedPalettes = JSON.parse(window.localStorage.getItem("palettes"));
-	const [palettes, setPalettes] = useState(savedPalettes || seedColors);
+	const palettes = useContext(PalettesContext);
 
-	const syncLocalStorage = () => {
-		window.localStorage.setItem("palettes", JSON.stringify(palettes));
-	};
 	const findPalette = id => {
 		return palettes.find(function(palette) {
 			return palette.id === id;
 		});
 	};
-	const deletePalette = id => {
-		setPalettes(palettes.filter(pal => pal.id !== id));
-		syncLocalStorage();
-	};
-	const savePalette = newPalette => {
-		setPalettes([...palettes, newPalette]);
-		syncLocalStorage();
-	};
+
 	return (
 		<Route
 			render={({ location }) => (
@@ -40,11 +29,7 @@ const App = () => {
 								path="/palette/new"
 								render={routeProps => (
 									<Page>
-										<NewPaletteForm
-											savePalette={savePalette}
-											palettes={palettes}
-											{...routeProps}
-										/>
+										<NewPaletteForm {...routeProps} />
 									</Page>
 								)}
 							/>
@@ -64,19 +49,6 @@ const App = () => {
 							/>
 							<Route
 								exact
-								path="/"
-								render={routeProps => (
-									<Page>
-										<PaletteList
-											palettes={palettes}
-											deletePalette={deletePalette}
-											{...routeProps}
-										/>
-									</Page>
-								)}
-							/>
-							<Route
-								exact
 								path="/palette/:id"
 								render={routeProps => (
 									<Page>
@@ -89,13 +61,18 @@ const App = () => {
 								)}
 							/>
 							<Route
+								exact
+								path="/"
 								render={routeProps => (
 									<Page>
-										<PaletteList
-											palettes={palettes}
-											deletePalette={deletePalette}
-											{...routeProps}
-										/>
+										<PaletteList {...routeProps} />
+									</Page>
+								)}
+							/>
+							<Route
+								render={routeProps => (
+									<Page>
+										<PaletteList {...routeProps} />
 									</Page>
 								)}
 							/>

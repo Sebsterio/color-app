@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import useToggle from "./hooks/useToggleState";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { withStyles } from "@material-ui/core/styles";
@@ -15,9 +15,14 @@ import PaletteFormNav from "./PaletteFormNav";
 import styles from "./styles/NewPaletteFormStyles";
 import seedColors from "./seedColors";
 import "emoji-mart/css/emoji-mart.css";
+import { PalettesContext } from "./context/palettes.context";
+import { DispatchContext } from "./context/palettes.context";
 
 const NewPaletteForm = props => {
-	const { classes, palettes, savePalette, history } = props;
+	const { classes, history } = props;
+	const palettes = useContext(PalettesContext);
+	const dispatch = useContext(DispatchContext); // save
+
 	const maxColors = 20;
 	const [open, toggleOpen] = useToggle(false);
 	const [colors, setColors] = useState(seedColors[0].colors);
@@ -45,17 +50,17 @@ const NewPaletteForm = props => {
 		setColors([...colors, randomColor]);
 	};
 
-	// Add newly created palette to App state and navigate to PaletteList (Home)
+	// Add newly created palette to context and navigate to '/'
 	const handleSubmit = newPalette => {
 		newPalette.id = newPalette.paletteName.toLowerCase().replace(/ /g, "-");
 		newPalette.colors = colors;
-		savePalette(newPalette);
+		dispatch({ type: "SAVE", palette: newPalette });
 		history.push("/");
 	};
 
 	// Sort colors in array to reflect their position on the grid after dragging
 	const onSortEnd = ({ oldIndex, newIndex }) => {
-		if (oldIndex === newIndex) return; // TODO: figure why crashes on colorDelete w/out this
+		if (oldIndex === newIndex) return; // crashes on colorDelete w/out this
 		setColors(arrayMove(colors, oldIndex, newIndex));
 	};
 
@@ -63,7 +68,6 @@ const NewPaletteForm = props => {
 		<div className={classes.root}>
 			<PaletteFormNav
 				open={open}
-				palettes={palettes}
 				handleSubmit={handleSubmit}
 				handleDrawerOpen={toggleOpen}
 			/>
