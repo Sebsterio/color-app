@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import useInputState from "./hooks/useInputState";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -11,7 +12,7 @@ import { Picker } from "emoji-mart";
 const PaletteMetaForm = props => {
 	const { palettes, hideForm, handleSubmit } = props;
 	const [stage, setStage] = useState("form");
-	const [newPaletteName, setNewPaletteName] = useState("");
+	const [newPaletteName, setNewPaletteName] = useInputState("");
 
 	// Set validation rules on mount
 	useEffect(() => {
@@ -56,7 +57,7 @@ const PaletteMetaForm = props => {
 							label="Palette Name"
 							value={newPaletteName}
 							name="newPaletteName"
-							onChange={e => setNewPaletteName(e.target.value)}
+							onChange={setNewPaletteName}
 							fullWidth
 							margin="normal"
 							validators={["required", "isPaletteNameUnique"]}

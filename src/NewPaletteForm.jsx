@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useToggle from "./hooks/useToggleState";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { withStyles } from "@material-ui/core/styles";
 import { arrayMove } from "array-move";
@@ -18,7 +19,7 @@ import "emoji-mart/css/emoji-mart.css";
 const NewPaletteForm = props => {
 	const { classes, palettes, savePalette, history } = props;
 	const maxColors = 20;
-	const [open, setOpen] = useState(false);
+	const [open, toggleOpen] = useToggle(false);
 	const [colors, setColors] = useState(seedColors[0].colors);
 	const paletteIsFull = colors.length >= maxColors;
 
@@ -64,7 +65,7 @@ const NewPaletteForm = props => {
 				open={open}
 				palettes={palettes}
 				handleSubmit={handleSubmit}
-				handleDrawerOpen={() => setOpen(true)}
+				handleDrawerOpen={toggleOpen}
 			/>
 			<Drawer
 				className={classes.drawer}
@@ -76,7 +77,7 @@ const NewPaletteForm = props => {
 				}}
 			>
 				<div className={classes.drawerHeader}>
-					<IconButton onClick={() => setOpen(false)}>
+					<IconButton onClick={toggleOpen}>
 						<ChevronLeftIcon />
 					</IconButton>
 				</div>

@@ -26,7 +26,11 @@ const SingleColorPalette = props => {
 
 	return (
 		<div className={classes.Palette}>
-			<Navbar handleChange={setFormat} showingAllColors={false} />
+			<Navbar
+				format={format}
+				handleChange={setFormat}
+				showingAllColors={false}
+			/>
 			<div className={classes.colors}>
 				{shades.map(color => (
 					<ColorBox

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import useToggle from "./hooks/useToggleState";
 import PaletteMetaForm from "./PaletteMetaForm";
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -13,9 +14,8 @@ import Button from "@material-ui/core/Button";
 import styles from "./styles/PaletteFormNavStyles";
 
 const PaletteFormNav = props => {
-	const [formShowing, setFormShowing] = useState(false);
-
 	const { classes, open, palettes, handleSubmit, handleDrawerOpen } = props;
+	const [formShowing, toggleFormShowing] = useToggle(false);
 
 	return (
 		<div className={classes.root}>
@@ -53,7 +53,7 @@ const PaletteFormNav = props => {
 					<Button
 						variant="contained"
 						color="primary"
-						onClick={() => setFormShowing(true)}
+						onClick={toggleFormShowing}
 						className={classes.button}
 					>
 						Save
@@ -64,7 +64,7 @@ const PaletteFormNav = props => {
 				<PaletteMetaForm
 					palettes={palettes}
 					handleSubmit={handleSubmit}
-					hideForm={() => setFormShowing(false)}
+					hideForm={toggleFormShowing}
 				/>
 			)}
 		</div>
